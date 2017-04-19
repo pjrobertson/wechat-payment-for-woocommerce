@@ -438,7 +438,7 @@ class WC_WeChatPay extends WC_Payment_Gateway
     {
         if(!$this->qrUrl){
             Log::DEBUG('Pay order with weChat payment');
-            echo '<p>' . __('Please scan the QR code with WeChat to finish the payment.', 'wechatpay') . '</p>';
+            echo '<p>' . __('Please scan the QR code with WeChat to finish the payment.', 'wechatpay') . '</p><p><strong>' . __('Do not close this window until you have completed your payment.', 'wechatpay') . '</strong></p>';
             $this->genetateQR($order);
         }
 

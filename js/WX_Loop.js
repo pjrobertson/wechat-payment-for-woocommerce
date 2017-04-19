@@ -1,6 +1,6 @@
 (function ($) {
-    var loopCnt = 50;
-    var looptime = 300; //ms
+    var loopCnt = 500;
+    var looptime = 500; //ms
 
     function queryOrderStatus() {
         var orderId = $('#WxQRCode').attr('OId');
