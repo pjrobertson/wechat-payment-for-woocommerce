@@ -127,7 +127,7 @@ msgstr ""
 msgid "Please scan the QR code with WeChat to finish the payment."
 msgstr "请通过微信扫描下方的二维码来完成支付。"
 
-msgid "Do not close this window until you have completed your payment."
+msgid "Do not close this window until you have completed your payment and the 'Order Success' message has been displayed."
 msgstr "请支付成功之前别关这个网页。"
 
 msgid "Settings"

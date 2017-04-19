@@ -83,7 +83,7 @@ class WC_WeChatPay extends WC_Payment_Gateway
         $order_id =  $_GET['orderId'];
         $order = new WC_Order($order_id);
         $isPaid =! $order->needs_payment();
-        Log::DEBUG(" check_wechatpay_response orderid:".$order_id."is need pay:" .$isPaid);
+        Log::DEBUG(" check_wechatpay_response orderid: ".$order_id." is need pay: " . json_encode($isPaid));
         if($isPaid){
             $returnUrl = urldecode($this->get_return_url($order));
             echo json_encode(array(
@@ -438,7 +438,7 @@ class WC_WeChatPay extends WC_Payment_Gateway
     {
         if(!$this->qrUrl){
             Log::DEBUG('Pay order with weChat payment');
-            echo '<p>' . __('Please scan the QR code with WeChat to finish the payment.', 'wechatpay') . '</p><p><strong>' . __('Do not close this window until you have completed your payment.', 'wechatpay') . '</strong></p>';
+            echo '<p>' . __('Please scan the QR code with WeChat to finish the payment.', 'wechatpay') . '</p><p><strong>' . __('Do not close this window until you have completed your payment and the \'Order Success\' message has been displayed.', 'wechatpay') . '</strong></p>';
             $this->genetateQR($order);
         }
 
