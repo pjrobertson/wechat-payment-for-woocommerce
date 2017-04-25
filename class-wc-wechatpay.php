@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) exit; // Exit if accessed directly
  * @class       WC_WeChatPay
  * @extends     WC_Payment_Gateway
  * @version     1.0
- * @auther      Shudong Zhu
+ * @auther      shudong
  * @mail        nkg_hank@126.com
  */
 class WC_WeChatPay extends WC_Payment_Gateway
@@ -32,6 +32,7 @@ class WC_WeChatPay extends WC_Payment_Gateway
             $this->charset = 'utf-8';
         }
         $this->include_files();
+	$this->qrUrl = null;
 
         $this->id = 'wechatpay';
         $this->icon = plugins_url('images/wechatpay.png', __FILE__);
@@ -83,7 +84,7 @@ class WC_WeChatPay extends WC_Payment_Gateway
         $order_id =  $_GET['orderId'];
         $order = new WC_Order($order_id);
         $isPaid =! $order->needs_payment();
-        Log::DEBUG(" check_wechatpay_response orderid: ".$order_id." is need pay: " . json_encode($isPaid));
+        Log::DEBUG(" check_wechatpay_response orderid:".$order_id."is need pay:" .$isPaid);
         if($isPaid){
             $returnUrl = urldecode($this->get_return_url($order));
             echo json_encode(array(
@@ -129,7 +130,7 @@ class WC_WeChatPay extends WC_Payment_Gateway
 
     function check_wechatpay_response()
     {
-
+        Log::DEBUG('enter check_wechatpay_response!');
         //generate QR Code
         if (isset($_GET['QRData'])) {
             $url = $_GET['QRData'];
@@ -137,8 +138,14 @@ class WC_WeChatPay extends WC_Payment_Gateway
             QRcode::png($url);
             exit;
         } else { //handle ipn callback
-            $xml = $GLOBALS['HTTP_RAW_POST_DATA'];
+
+            //not supported by php7 only support by php 5
+            //$xml = $GLOBALS['HTTP_RAW_POST_DATA'];
+
+            //modification for php7 support
+            $xml =  file_get_contents("php://input");
             Log::DEBUG(' message callback.' . print_r($xml, true));
+
             Log::DEBUG('weChat Async IPN message callback.');
             if ($this->isWeChatIPNValid($xml)) {
                 Log::DEBUG('weChat IPN is valid message.');
@@ -436,10 +443,13 @@ class WC_WeChatPay extends WC_Payment_Gateway
 
     function receipt_page($order)
     {
+	#print_r($this);
         if(!$this->qrUrl){
             Log::DEBUG('Pay order with weChat payment');
-            echo '<p>' . __('Please scan the QR code with WeChat to finish the payment.', 'wechatpay') . '</p><p><strong>' . __('Do not close this window until you have completed your payment and the \'Order Success\' message has been displayed.', 'wechatpay') . '</strong></p>';
+            echo '<div id="wechatinfo"><p>' . __('Please scan the QR code with WeChat to finish the payment.', 'wechatpay') . '</p><p><strong>' . __('Do not close this window until you have completed your payment.', 'wechatpay') . '</strong></p>';
             $this->genetateQR($order);
+	    echo '</div>';
+            echo '<div id="wechatexpired" style="display:none"><h4 style="color:#ff0000;width:50%;min-width:400px">' . __('Whoops, too slow! The WeChat QR Code has expired. You\'ll need to refresh this page to generate a new QR Code.', 'wechatpay') . '</h4></div>';
         }
 
 
